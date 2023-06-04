@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Realtime Report</title>
+    <style>
+      .dashboard {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .card {
+        width: 300px;
+        height: 500px;
+        margin: 40px;
+        padding: 10px;
+        background-color: white;
+        border: 1px solid #dadce0;
+        /* overflow: hidden; */
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .chart-container {
+        width: 80%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <div class="card">
+        <div class="chart-container" id="chart1"></div>
+        <h5>30분 동안의 사용자</h5>
+      </div>
+      <div class="card">
+        <h5>30분 동안의 사용자</h5>
+        <div style="max-height: 330px; overflow: auto">
+          <table>
+            <tr>
+              <th>deviceCategory</th>
+              <th>activeUsers</th>
+            </tr>
+            {% for row in response1.rows %}
+            <tr>
+              <td>{{ row.dimension_values[0].value }}</td>
+              <td>{{ row.metric_values[0].value }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="chart-container" id="chart2"></div>
+        <h5>잠재고객 별 사용자</h5>
+      </div>
+      <div class="card">
+        <h5>잠재고객 별 사용자</h5>
+        <div style="max-height: 330px; overflow: auto">
+          <table>
+            <tr>
+              <th>audienceName</th>
+              <th>activeUsers</th>
+            </tr>
+            {% for row in response2.rows %}
+            <tr>
+              <td>{{ row.dimension_values[0].value }}</td>
+              <td>{{ row.metric_values[0].value }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="chart-container" id="chart3"></div>
+        <h5>페이지 제목 및 화면 이름 별 조회수</h5>
+      </div>
+      <div class="card">
+        <h5>페이지 제목 및 화면 이름 별 조회수</h5>
+        <div style="max-height: 330px; overflow: auto">
+          <table>
+            <tr>
+              <th>audienceName</th>
+              <th>activeUsers</th>
+            </tr>
+            {% for row in response3.rows %}
+            <tr>
+              <td>{{ row.dimension_values[0].value }}</td>
+              <td>{{ row.metric_values[0].value }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h5>이벤트 이름 별 이벤트 수</h5>
+        <div style="max-height: 330px; overflow: auto">
+          <table>
+            <tr>
+              <th>audienceName</th>
+              <th>activeUsers</th>
+            </tr>
+            {% for row in response4.rows %}
+            <tr>
+              <td>{{ row.dimension_values[0].value }}</td>
+              <td>{{ row.metric_values[0].value }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h5>이벤트 이름 별 전환</h5>
+        <div style="max-height: 330px; overflow: auto">
+          <table>
+            <tr>
+              <th>audienceName</th>
+              <th>activeUsers</th>
+            </tr>
+            {% for row in response5.rows %}
+            <tr>
+              <td>{{ row.dimension_values[0].value }}</td>
+              <td>{{ row.metric_values[0].value }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+      const data1 = [
+        {% for row in response1.rows %}
+          { category: "{{ row.dimension_values[0].value }}", value: {{ row.metric_values[0].value }} },
+        {% endfor %}
+      ];
+
+      const container1 = d3.select("#chart1");
+      const margin1 = { top: 20, right: 20, bottom: 30, left: 40 };
+      const width1 = container1.node().getBoundingClientRect().width - margin1.left - margin1.right;
+      const height1 = container1.node().getBoundingClientRect().height - margin1.top - margin1.bottom;
+
+      const svg1 = container1
+        .append("svg")
+        .attr("width", width1 + margin1.left + margin1.right)
+        .attr("height", height1 + margin1.top + margin1.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin1.left + "," + margin1.top + ")");
+
+      const x1 = d3
+        .scaleBand()
+        .rangeRound([0, width1])
+        .padding(0.1)
+        .domain(data1.map((d) => d.category));
+
+      const y1 = d3
+        .scaleLinear()
+        .rangeRound([height1, 0])
+        .domain([0, d3.max(data1, (d) => +d.value)]);
+
+      svg1
+        .append("g")
+        .attr("transform", "translate(0," + height1 + ")")
+        .call(d3.axisBottom(x1));
+
+      svg1.append("g").call(d3.axisLeft(y1));
+
+      svg1
+        .selectAll(".bar")
+        .data(data1)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", (d) => x1(d.category))
+        .attr("y", (d) => y1(d.value))
+        .attr("width", x1.bandwidth())
+        .attr("height", (d) => height1 - y1(d.value))
+        .style("fill", "#fcba03");
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const cards = document.querySelectorAll('.card');
+
+        function animateCards() {
+          cards.forEach(function (card) {
+            if (isElementInViewport(card)) {
+              card.classList.add('animate');
+            } else {
+              card.classList.remove('animate');
+            }
+          });
+        }
+
+        function isElementInViewport(element) {
+          const rect = element.getBoundingClientRect();
+          return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <=
+              (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <=
+              (window.innerWidth || document.documentElement.clientWidth)
+          );
+        }
+
+        animateCards();
+
+        window.addEventListener('scroll', animateCards);
+        window.addEventListener('resize', animateCards);
+      });
+    </script>
+
+    <script>
+      // D3.js Bar Chart Example
+      const data2 = [
+        {% for row in response5.rows %}
+          { category: "{{ row.dimension_values[0].value }}", value: {{ row.metric_values[0].value }} },
+        {% endfor %}
+      ];
+
+      const container2 = d3.select("#chart2");
+      const margin2 = { top: 20, right: 20, bottom: 30, left: 40 };
+      const width2 = container2.node().getBoundingClientRect().width - margin2.left - margin2.right;
+      const height2 = container2.node().getBoundingClientRect().height - margin2.top - margin2.bottom;
+
+      const svg2 = container2
+        .append("svg")
+        .attr("width", width2 + margin2.left + margin2.right)
+        .attr("height", height2 + margin2.top + margin2.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+      const x2 = d3
+        .scaleBand()
+        .rangeRound([0, width2])
+        .padding(0.1)
+        .domain(data2.map((d) => d.category));
+
+      const y2 = d3
+        .scaleLinear()
+        .rangeRound([height2, 0])
+        .domain([0, d3.max(data2, (d) => +d.value)]);
+
+      svg2
+        .append("g")
+        .attr("transform", "translate(0," + height2 + ")")
+        .call(d3.axisBottom(x2));
+
+      svg2.append("g").call(d3.axisLeft(y2));
+
+      svg2
+        .selectAll(".bar")
+        .data(data1)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", (d) => x2(d.category))
+        .attr("y", (d) => y2(d.value))
+        .attr("width", x2.bandwidth())
+        .attr("height", (d) => height2 - y2(d.value))
+        .style("fill", "#1e66c9");
+    </script>
+
+    <script>
+      // D3.js Pie Chart Example
+      const data3 = [
+        {% for row in response4.rows %}
+          { category: "{{ row.dimension_values[0].value }}", value: {{ row.metric_values[0].value }} },
+        {% endfor %}
+      ];
+
+      const container3 = d3.select("#chart3");
+      const width3 = container3.node().getBoundingClientRect().width;
+      const height3 = container3.node().getBoundingClientRect().height;
+      const radius = Math.min(width3, height3) / 2;
+
+      const svg3 = container3
+        .append("svg")
+        .attr("width", width3)
+        .attr("height", height3)
+        .append("g")
+        .attr("transform", "translate(" + width3 / 2 + "," + height3 / 2 + ")");
+
+      const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+      const pie = d3.pie().value((d) => d.value);
+
+      const arc = d3.arc().innerRadius(0).outerRadius(radius);
+
+      const arcs = svg3.selectAll("arc").data(pie(data3)).enter().append("g");
+
+      arcs
+        .append("path")
+        .attr("d", arc)
+        .attr("fill", (d, i) => color(i))
+        .attr("stroke", "white")
+        .style("stroke-width", "2px");
+
+      arcs
+        .append("text")
+        .attr("transform", (d) => "translate(" + arc.centroid(d) + ")")
+        .attr("text-anchor", "middle")
+        .text((d) => d.data.category)
+        .style("fill", "white");
+    </script>
+  </body>
+</html>

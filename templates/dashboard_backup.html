@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>대시보드</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      /* 추가적인 스타일링을 원하는 경우 여기에 작성하세요 */
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-2 sidebar">
+          <h3>네비게이션</h3>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="#">대시보드</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">판매량</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">방문자 수</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">주문 수</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">매출</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-10">
+          <div class="container">
+            <h1>대시보드</h1>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">판매량</h5>
+                    <p class="card-text">오늘의 총 판매량: 100</p>
+                    <canvas id="salesChart"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">방문자 수</h5>
+                    <p class="card-text">오늘의 총 방문자 수: 500</p>
+                    <canvas id="visitorsChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">주문 수</h5>
+                    <p class="card-text">오늘의 총 주문 수: 50</p>
+                    <canvas id="ordersChart"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">매출</h5>
+                    <p class="card-text">오늘의 총 매출: $1000</p>
+                    <canvas id="revenueChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 차트 데이터
+      var salesData = {
+        labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+        datasets: [
+          {
+            label: '월간 판매량',
+            data: [50, 70, 60, 80, 75, 90],
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      var visitorsData = {
+        labels: ['월', '화', '수', '목', '금', '토', '일'],
+        datasets: [
+          {
+            label: '주간 방문자 수',
+            data: [500, 600, 550, 700, 650, 800, 750],
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      var ordersData = {
+        labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+        datasets: [
+          {
+            label: '월간 주문 수',
+            data: [30, 40, 35, 45, 50, 55],
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      var revenueData = {
+        labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+        datasets: [
+          {
+            label: '월간 매출',
+            data: [1000, 1200, 1100, 1300, 1250, 1400],
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            borderColor: 'rgba(255, 206, 86, 1)',
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      // 차트 생성
+      var salesChart = new Chart(document.getElementById('salesChart'), {
+        type: 'bar',
+        data: salesData,
+      });
+
+      var visitorsChart = new Chart(document.getElementById('visitorsChart'), {
+        type: 'line',
+        data: visitorsData,
+      });
+
+      var ordersChart = new Chart(document.getElementById('ordersChart'), {
+        type: 'bar',
+        data: ordersData,
+      });
+
+      var revenueChart = new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: revenueData,
+      });
+    </script>
+  </body>
+</html>
